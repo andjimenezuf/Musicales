@@ -1,0 +1,137 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+}
+
+body {
+    font-family: sans-serif;
+}
+
+.navbar {
+    /** 
+    https://coolors.co/palettes/trending
+    **/
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: #6f1d1b;
+    color: #ffe6a7;
+    padding: 25px 60px;
+    margin-bottom: 30px;
+
+}
+
+.cart {
+    position: relative;
+    color: #ffe6a7;
+    font-size: 30px;
+    padding: 5px;
+}
+
+.totalCartQty {
+    position: absolute;
+    top: -15px;
+    right: -3px;
+    background-color: navy;
+    font-size: 16px;
+    color: #fff;
+    padding: 3px;
+    border-radius: 15px;
+
+}
+
+/**
+* productList items styles are here
+**/
+.productList {
+    display: grid;
+    grid-template-columns: repeat(3, 250px);
+    gap: 30px;
+    justify-content: center;
+
+}
+
+@media(max-width: 1000px) {
+    .productList {
+        grid-template-columns: repeat(2, 250px);
+    }
+}
+
+@media(max-width: 500px) {
+    .productList {
+        grid-template-columns: repeat(1, 250px);
+    }
+}
+
+.item {
+
+    border: 1px solid #023047;
+    border-radius: 5px;
+}
+
+.details {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    gap: 10px;
+
+}
+
+.price-qty {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    font-size: 16px;
+
+}
+
+.bi-dash-square {
+    color: red;
+}
+
+.bi-plus-square {
+    color: green;
+}
+
+.cart-modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.cart-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+}
+
+.close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
