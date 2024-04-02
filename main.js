@@ -1,140 +1,126 @@
-let productList = document.getElementById("productList");
+let instruments = []; // This will hold your instruments data
+let shoppingCart = []; // This will track items in the cart
 
-let productDataArray = [
-    {
-        id: "simonItem_1",
-        productName: "Pasaye Bajo Quinto",
-        price: 899,
-        desc: "Limited-Edition Garra de oso Bajo quinto",
-        image: "images/5to.png", 
-        qty: 0
-    },
-    {
-        id: "simonItem_3",
-        productName: 'Ibanez SR2600',
-        price: 1699,
-        desc: "Premium Bass Cerulean Blue Burst",
-        image: "images/ibanez.png",
-        qty: 0
-    },
-    {
-        id: "simonItem_2",
-        productName: 'Yamaha Acoustic Drumset',
-        price: 899,
-        desc: "Yamaha Stage Custom Hip 4-Piece Shell Pack Natural Wood",
-        image: "images/yamaha_drumset.png",
-        qty: 0
-    },
-    
-];
+// Supabase client initialization
+const supabaseUrl = 'https://ajluevhlxphuysdofbja.supabase.co';
+//MASEKED KEY
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFqbHVldmhseHBodXlzZG9mYmphIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTIwNzA3NDYsImV4cCI6MjAyNzY0Njc0Nn0.yzEfuQvIAgiM5oTahl9AlBizuUwTwX15ZhkoUkmTi0E';
+const database = supabase.createClient(supabaseUrl, supabaseKey);
 
-// ES6 arrow function
-let showProductList = () => {
-    return (productList.innerHTML = productDataArray.map((x) => {
-        return (
-            // We will use template literals using back tick!
-            `<div id="product-id-${x.id}" class="item">
-                <img width="245" height="60%" src="${x.image}" alt="">
-                <div class="details">
-                    <h3>${x.productName}</h3>
-                    <p>${x.desc}</p>
-                    <div class="price-qty">
-                        <h2>$ ${x.price}</h2>
-                        <div class="buttons">
-                            <i onclick="removeItem(${x.id})" class="bi bi-dash-square"></i>
-                            <div id="${x.id}" class="qty">${x.qty}</div>
-                            <i onclick="addItem(${x.id})" class="bi bi-plus-square"></i>
-                        </div>
-                    </div>
-                </div>   
-            </div>`
-        )
-    }).join(""));// IMPORTANT TO JOIN othewise, commas showinng from Array.
-
-};
-showProductList();
-
-let shoppingCart = []; // Empty Array
-
-let addItem = (clickedItem) => {
-    let selectedItem = clickedItem;
-    //console.log('addItem = ' + selectedItem.id);
-    let searchInCart = shoppingCart.find((x) => x.id === selectedItem.id);
-    // Logic or Algorithm for adding item(s) from shopping cart.
-    if (searchInCart === undefined) {
-        // Not found int the shopping cart, Add to cart.
-        shoppingCart.push({
-            id: selectedItem.id,
-            qty: 1
-        });
-    }
-    else {
-        // found the item. Just add 1 to qty.
-        searchInCart.qty += 1;
-    }
-    console.log(shoppingCart);
-    addAllItemsInCart();
-    updateItem(selectedItem.id);
-}
-let removeItem = (clickedItem) => {
-    let selectedItem = clickedItem;
-    //console.log('addItem = ' + selectedItem.id);
-    let searchInCart = shoppingCart.find((x) => x.id === selectedItem.id);
-    // Logic or Algorithm for removing item(s) from shopping cart.
-    if (searchInCart.qty === 0) {
-        // if the cart has ZERO item, just do nothing and return!!!
+// Function to fetch instruments from the database and display them
+const fetchAndShowInstruments = async () => {
+    const instrumentListDiv = document.getElementById("instrumentList");
+    if (!instrumentListDiv) {
+        console.error('Instrument list div not found!');
         return;
     }
-    else {
-        // found the item. Just minus 1 from qty.
-        searchInCart.qty -= 1;
-    }
 
-    addAllItemsInCart();
-    updateItem(selectedItem.id);
-}
-let updateItem = (id) => {
-    let foundItem = shoppingCart.find((x) => x.id === id);
-    console.log(id)
-    if (foundItem) {
+    instrumentListDiv.innerText = "Loading....";
+    
+    const { data, error } = await database.from("instruments").select("*");
 
-        document.getElementById(id).innerHTML = foundItem.qty;
-    }
-}
-
-let addAllItemsInCart = () => {
-    let total = 0;
-    for (i = 0; i < shoppingCart.length; i++) {
-        total += shoppingCart[i].qty;
-    }
-    console.log(total);
-
-    document.getElementById("totalCartQty").innerHTML = total;
-
-}
-function toggleCart() {
-    let modal = document.getElementById('cartModal');
-    if (modal.style.display === "none" || modal.style.display === "") {
-        modal.style.display = "block";
-        updateCartModal();
+    if (error) {
+        console.error('Error fetching instruments:', error);
+        instrumentListDiv.innerText = "Failed to load instruments.";
     } else {
-        modal.style.display = "none";
+        // Assign fetched instruments to the global variable
+        instruments = data;
+        // Generate HTML for each instrument and display it
+        instrumentListDiv.innerHTML = instruments.map(instrument => {
+            return `
+                <div id="product-id-${instrument.id}" class="item">
+                    <img width="245" height="60%" src="${instrument.imageUrl}" alt="${instrument.name}">
+                    <div class="details">
+                        <h3>${instrument.name}</h3>
+                        <p>${instrument.description}</p>
+                        <div class="price-qty">
+                            <h2>$${instrument.price}</h2>
+                            <div class="buttons">
+                                <i onclick="removeItem('${instrument.id}')" class="bi bi-dash-square"></i>
+                                <div id="qty-${instrument.id}" class="qty">0</div>
+                                <i onclick="addItem('${instrument.id}')" class="bi bi-plus-square"></i>
+                            </div>
+                        </div>
+                    </div>   
+                </div>
+            `;
+        }).join('');
+        updateCartTotal(); // Call to update cart total after instruments are fetched
     }
-}
-function closeCart() {
-    document.getElementById('cartModal').style.display = "none";
-}
+};
 
-function updateCartModal() {
-    let cartItemsDiv = document.getElementById('cartItems');
-    let cartTotalValue = 0;
-    cartItemsDiv.innerHTML = ''; // Clear the current items
+// Call fetchAndShowInstruments on page load
+fetchAndShowInstruments();
+
+const addAllItemsInCart = () => {
+    let totalQty = 0; // Initialize total quantity
+
+    // Sum up the quantity of all items in the shopping cart
     shoppingCart.forEach(item => {
-        let product = productDataArray.find(p => p.id === item.id);
-        if (product) {
-            cartTotalValue += item.qty * product.price;
-            cartItemsDiv.innerHTML += `<p>${product.productName} x ${item.qty} = $${item.qty * product.price}</p>`;
+        totalQty += item.qty;
+    });
+
+    // Update the cart icon's quantity display
+    document.getElementById("totalCartQty").textContent = totalQty;
+};
+// Function to add an item to the shopping cart
+let addItem = (id) => {
+    let found = shoppingCart.find(item => item.id === id);
+    if (!found) {
+        shoppingCart.push({ id, qty: 1 });
+    } else {
+        found.qty += 1;
+    }
+    updateItem(id);
+    updateCartTotal();
+    addAllItemsInCart(); // Update total quantity
+};
+
+// Function to remove an item from the shopping cart
+let removeItem = (id) => {
+    let found = shoppingCart.find(item => item.id === id);
+    if (found && found.qty > 0) {
+        found.qty -= 1;
+    }
+    updateItem(id);
+    updateCartTotal();
+    addAllItemsInCart(); // Update total quantity
+};
+
+// Function to update the displayed quantity for an item
+let updateItem = (id) => {
+    const qtyDiv = document.getElementById(`qty-${id}`);
+    if (qtyDiv) {
+        let found = shoppingCart.find(item => item.id === id);
+        qtyDiv.textContent = found ? found.qty : 0;
+    }
+};
+
+// Function to calculate and update the cart total value
+const updateCartTotal = () => {
+    let totalValue = 0;
+    let cartItemsDiv = document.getElementById('cartItems');
+    cartItemsDiv.innerHTML = ''; // Clear current cart items
+
+    shoppingCart.forEach(item => {
+        let foundInstrument = instruments.find(instrument => instrument.id === item.id);
+        if (foundInstrument) {
+            let itemTotal = item.qty * foundInstrument.price;
+            totalValue += itemTotal;
+            cartItemsDiv.innerHTML += `<p>${foundInstrument.name} x ${item.qty} = $${itemTotal.toFixed(2)}</p>`;
         }
     });
-    document.getElementById('cartTotalValue').innerText = cartTotalValue.toFixed(2);
+
+    document.getElementById('cartTotalValue').innerText = totalValue.toFixed(2);
+};
+
+// DOM-related functions
+function toggleCart() {
+    let modal = document.getElementById('cartModal');
+    modal.style.display = modal.style.display === "none" || modal.style.display === "" ? "block" : "none";
+    updateCartTotal();
+}
+
+function closeCart() {
+    document.getElementById('cartModal').style.display = "none";
 }

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <title>Inventory management</title>
+
+</head>
+<body>
+    <div class="container-fluid  navbar p-5">
+        <div class="container ">
+            <h4 class="text-center navbar">Supabase CRUD for Musical Instruments</h4>
+            <a href="index.html">Home Page</a> 
+        </div>
+    </div>
+
+    <div class="container my-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h3>Musical Instruments (<span id="total"></span>)</h3>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#myModal">Add New</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h4 id="loading"></h4>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Count</th>
+                        <th>Description</th>
+                        <th>Image</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- The Modal for Adding New Instrument -->
+    <div class="modal fade" id="myModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Add New Instrument</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                        <div class="my-3">
+                            <label for="name">Product Name</label>
+                            <input type="text" id="name" class="form-control">
+                        </div>
+                        <div class="my-3">
+                            <label for="price">Price</label>
+                            <input type="number" id="price" class="form-control">
+                        </div>
+                        <div class="my-3">
+                            <label for="count">Stock Count</label>
+                            <input type="number" id="count" class="form-control">
+                        </div>
+                        <div class="my-3">
+                            <label for="description">Description</label>
+                            <input type="text" id="description" class="form-control">
+                        </div>
+                        <div class="my-3">
+                            <label for="image-url">Image URL</label>
+                            <input type="text" id="imageUrl" class="form-control">
+                        </div>
+                        <div class="my-3">
+                            <button class="btn btn-primary" id="save">Save</button>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- The Modal for Editing Instrument -->
+    <div class="modal fade" id="editModel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Update Instrument</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                
+                <!-- Modal body -->
+                <div class="modal-body">
+                        <div class="my-3">
+                            <label for="edit-name">Product Name</label>
+                            <input type="text" id="edit-name" class="form-control">
+                            <input type="hidden" id="edit-id" class="form-control">
+                        </div>
+                        <div class="my-3">
+                            <label for="edit-price">Price</label>
+                            <input type="number" id="edit-price" class="form-control">
+                        </div>
+                        <div class="my-3">
+                            <label for="edit-count">Stock Count</label>
+                            <input type="number" id="edit-count" class="form-control">
+                        </div>
+                        <div class="my-3">
+                            <label for="edit-description">Description</label>
+                            <input type="text" id="edit-description" class="form-control">
+                        </div>
+                        <div class="my-3">
+                            <label for="edit-image-url">Image URL</label>
+                            <input type="text" id="edit-image-url" class="form-control">
+                        </div>
+                        <div class="my-3">
+                            <button class="btn btn-primary" id="update">Update</button>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="inventory.js"></script> 
+</body>
+</html>
